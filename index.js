@@ -19,6 +19,14 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     const serviceCollection = client.db("reddy_customs").collection("services");
+
+    app.get("/all-services", (req, res) => {
+      const query = {};
+      const cursor = serviceCollection.find(query);
+      const result = cursor.toArray();
+
+      res.send(result);
+    });
   } finally {
   }
 }
