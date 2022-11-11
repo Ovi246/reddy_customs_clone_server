@@ -9,7 +9,7 @@ app.use(express.json());
 
 const port = process.env.PORT || 5000;
 
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.8jr6sk9.mongodb.net/?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.8jr6sk9.mongodb.net/?retryWrites=true&w=majority`;
 
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
@@ -21,19 +21,25 @@ async function run() {
   try {
     const serviceCollection = client.db("reddy_customs").collection("services");
 
-    app.get("/all-services", (req, res) => {
+    app.get("/all-services", async (req, res) => {
       const query = {};
       const cursor = serviceCollection.find(query);
-      const result = cursor.toArray();
+      const result = await cursor.toArray();
 
       res.send(result);
     });
 
-    app.get("/services", (req, res) => {
+    app.get("/services", async (req, res) => {
       const query = {};
       const cursor = serviceCollection.find(query).limit(3);
-      const result = cursor.toArray();
+      const result = await cursor.toArray();
 
+      res.send(result);
+    });
+
+    app.post("/services", async (req, res) => {
+      const order = req.body;
+      const result = await orderCollection.insertOne(order);
       res.send(result);
     });
   } finally {
